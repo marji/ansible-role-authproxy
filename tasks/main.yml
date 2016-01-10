@@ -1,0 +1,29 @@
+---
+- name: Install Apache
+  apt: name=apache2 update_cache=yes cache_valid_time=3600 state=present
+
+- name: Enable mod_ssl
+  apache2_module: state=present name=ssl
+  notify:
+    - Restart Apache
+- name: Enable mod_proxy_http
+  apache2_module: state=present name=proxy_http
+  notify:
+    - Restart Apache
+- name: Enable headers
+  apache2_module: state=present name=headers
+  notify:
+    - Restart Apache
+- name: Configure proxy
+  template:
+    src=authproxy.conf.j2
+    dest=/etc/apache2/sites-enabled/030-authproxy.conf
+    owner=root
+    group=root
+    mode=0644
+  notify:
+    - Restart Apache
+
+- name: Start and Enable Apache Service
+  service: name=apache2 state=running enabled=yes
+

@@ -1,0 +1,41 @@
+<VirtualHost *:443>
+
+  SSLEngine on
+
+  SSLCertificateFile      {{ ssl_cert_file }}
+  SSLCertificateKeyFile   {{ ssl_key_file }}
+{% if ssl_cert_chain_file is defined %}
+  SSLCertificateChainFile {{ ssl_cert_chain_file }}
+{% endif %}
+
+  ServerName {{ server_name }}
+  ProxyRequests     Off
+  ProxyPreserveHost On
+
+  RequestHeader    unset Authorization
+  RequestHeader    set X-Forwarded-Proto "https"
+  ProxyPass        / {{ app_url }}
+  ProxyPassReverse / {{ app_url }}
+
+{% if auth_user_file is defined %}
+  <Location "/">
+
+    AuthType basic
+    AuthName "Protected."
+    AuthUserFile "/etc/apache2/.htpasswd"
+    Require valid-user
+    #Require user test
+
+  </Location>
+{% endif %}
+
+
+  ErrorLog ${APACHE_LOG_DIR}/authproxy-error.log
+
+  # Possible values include: debug, info, notice, warn, error, crit,
+  # alert, emerg.
+  LogLevel warn
+
+  CustomLog ${APACHE_LOG_DIR}/authproxy-access.log combined
+
+</VirtualHost>
