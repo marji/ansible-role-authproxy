@@ -22,7 +22,7 @@
 
     AuthType basic
     AuthName "Protected."
-    AuthUserFile "/etc/apache2/.htpasswd"
+    AuthUserFile "{{ auth_user_file }}"
     Require valid-user
     #Require user test
 
