@@ -24,6 +24,16 @@
   notify:
     - Restart Apache
 
+- name: Configure SSL module
+  template:
+    src=ssl.conf.j2
+    dest=/etc/apache2/mods-available/ssl.conf
+    owner=root
+    group=root
+    mode=0644
+  notify:
+    - Restart Apache
+
 - name: Start and Enable Apache Service
   service: name=apache2 state=running enabled=yes
 
