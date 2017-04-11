@@ -1,0 +1,48 @@
+---
+- name: ensure cert and key related ansible variables are defined
+  assert:
+    that:
+      - src_ssl_cert_file is defined
+      - ssl_cert_file is defined
+      - src_ssl_key_file is defined
+      - ssl_key_file is defined
+
+- name: ensure cert chain file is defined if its source was defined
+  assert:
+    that: ssl_cert_chain_file is defined
+  when: src_ssl_cert_chain_file is defined
+
+- name: create separate dir for certs
+  file:
+    path: "{{ ssl_dir_path }}"
+    state: directory
+    mode: '0755'
+  when: ssl_dir_path is defined
+
+- name: upload SSL cert
+  copy:
+    src: "{{ src_ssl_cert_file }}"
+    dest: "{{ ssl_cert_file }}"
+    owner: 'root'
+    group: 'root'
+    mode:  '0644'
+  when: src_ssl_cert_file is defined
+
+- name: upload SSL key
+  copy:
+    src: "{{ src_ssl_key_file }}"
+    dest: "{{ ssl_key_file }}"
+    owner: 'root'
+    group: 'ssl-cert'
+    mode:  '0640'
+  when: src_ssl_key_file is defined
+
+- name: upload SSL chain file
+  copy:
+    src: "{{ src_ssl_cert_chain_file }}"
+    dest: "{{ ssl_cert_chain_file }}"
+    owner: 'root'
+    group: 'root'
+    mode:  '0644'
+  when: src_ssl_cert_chain_file is defined
+

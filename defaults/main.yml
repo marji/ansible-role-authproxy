@@ -1,8 +1,31 @@
 ---
-ssl_cert_file: '/etc/ssl/certs/ssl-cert-snakeoil.pem'
-ssl_key_file:  '/etc/ssl/private/ssl-cert-snakeoil.key'
+snakeoil_ssl_cert_file: '/etc/ssl/certs/ssl-cert-snakeoil.pem'
+snakeoil_ssl_key_file:  '/etc/ssl/private/ssl-cert-snakeoil.key'
 app_url: 'http://127.0.0.1:80/'
 server_name: 'app.example.com'
 ssl_cipher_suite: 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
 ssl_honor_cipher_order: 'on'
 ssl_protocol: 'all -SSLv2 -SSLv3'
+#
+# optional:
+# ssl_dir_path: '/etc/ssl/mydomain'
+# # Cert file locations on the destination server:
+# ssl_cert_file: '/etc/ssl/mydomain/mydomain.crt'
+# ssl_key_file: '/etc/ssl/mydomain/mydomain.key'
+# ssl_cert_chain_file: '/etc/ssl/mydomain/mydomain.pem'
+# # Cert file sources
+# # If these src_ vars are defined, they will be uploaded to the above paths:
+# src_ssl_cert_file: '/tmp/cert/mydomain.crt'
+# src_ssl_key_file: '/tmp/cert/mydomain.key'
+# src_ssl_cert_chain_file: '/tmp/cert/mydomain.pem'
+
+auth_user_file: '/etc/apache2/.htpasswd'
+# for no basic auth, define this as:
+# auth_user_file: ''
+#
+# optional:
+# htpasswd_users:
+#   - basic_auth_user: user1
+#     basic_auth_pass: pass1
+#   - basic_auth_user: user2
+#     basic_auth_pass: pass2

@@ -2,18 +2,28 @@
 - name: Install Apache
   apt: name=apache2 update_cache=yes cache_valid_time=3600 state=present
 
+- name: Include cert upload if they are defined
+  include: upload_certs.yml
+  static: no
+  when: src_ssl_cert_file is defined or src_ssl_key_file is defined or src_ssl_cert_chain_file is defined
+
+- name: Verify cert files exist on destination if they are defined
+  include: certs.yml
+  static: no
+  when: ssl_cert_file is defined or ssl_key_file is defined or ssl_cert_chain_file is defined
+
 - name: Enable mod_ssl
   apache2_module: state=present name=ssl
   notify:
-    - Restart Apache
+    - restart apache
 - name: Enable mod_proxy_http
   apache2_module: state=present name=proxy_http
   notify:
-    - Restart Apache
+    - restart apache
 - name: Enable headers
   apache2_module: state=present name=headers
   notify:
-    - Restart Apache
+    - restart apache
 - name: Configure proxy
   template:
     src=authproxy.conf.j2
@@ -22,7 +32,7 @@
     group=root
     mode=0644
   notify:
-    - Restart Apache
+    - restart apache
 
 - name: Configure SSL module
   template:
@@ -32,7 +42,20 @@
     group=root
     mode=0644
   notify:
-    - Restart Apache
+    - restart apache
+
+- name: Make sure we can use htpasswd module
+  apt: "pkg=python-passlib state=installed"
+  when: htpasswd_users is defined
+
+- name: Generate .htpasswd
+  htpasswd:
+    path: "{{ auth_user_file }}"
+    name: "{{ item.basic_auth_user }}"
+    password: "{{ item.basic_auth_pass }}"
+  with_items: "{{ htpasswd_users | default([]) }}"
+  when: htpasswd_users is defined
+  notify: restart apache
 
 - name: Start and Enable Apache Service
   service: name=apache2 state=running enabled=yes

@@ -2,8 +2,8 @@
 
   SSLEngine on
 
-  SSLCertificateFile      {{ ssl_cert_file }}
-  SSLCertificateKeyFile   {{ ssl_key_file }}
+  SSLCertificateFile      {{ ssl_cert_file | default(snakeoil_ssl_cert_file) }}
+  SSLCertificateKeyFile   {{ ssl_key_file  | default(snakeoil_ssl_key_file) }}
 {% if ssl_cert_chain_file is defined %}
   SSLCertificateChainFile {{ ssl_cert_chain_file }}
 {% endif %}
@@ -17,7 +17,7 @@
   ProxyPass        / {{ app_url }}
   ProxyPassReverse / {{ app_url }}
 
-{% if auth_user_file is defined %}
+{% if auth_user_file is defined and auth_user_file %}
   <Location "/">
 
     AuthType basic

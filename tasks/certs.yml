@@ -1,0 +1,25 @@
+---
+- name: make sure SSL cert exists and has right perms
+  file:
+    state: file
+    path:  "{{ ssl_cert_file }}"
+    owner: 'root'
+    group: 'root'
+    mode:  '0644'
+- name: make sure SSL key exists and has right perms
+  file:
+    state: file
+    path:  "{{ ssl_key_file }}"
+    owner: 'root'
+    group: 'ssl-cert'
+    mode:  '0640'
+
+- name: make sure SSL chain file exists and is secure
+  file:
+    state: file
+    path:  "{{ ssl_cert_chain_file }}"
+    owner: root
+    group: root
+    mode:  '0644'
+  when: ssl_cert_chain_file is defined
+
